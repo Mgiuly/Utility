@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolatore Superficie Commerciale - Giuliato&Battistin</title>
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Chart.js for Visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #2B5A8F; /* Deeper Blue */
+            --secondary-color: #EBF3FA; /* Light Blue-Gray */
+            --accent-color: #4A90E2; /* Bright Blue */
+            --text-color: #334155; /* Dark Gray-Blue */
+            --light-text-color: #64748B;
+            --border-color: #CBD5E1;
+            --input-bg: #FFFFFF;
+            --card-bg: #FFFFFF;
+            --success-color: #10B981; /* Emerald */
+            --danger-color: #EF4444; /* Red */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --border-radius: 8px;
+            --font-family: 'Poppins', sans-serif;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            line-height: 1.6;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 30px 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            max-width: 800px; /* Increased width */
+            width: 100%;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        /* Header Styling */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+        }
+         header h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 2.2em; /* Larger */
+            font-weight: 600;
+         }
+         header .agency-info {
+            font-size: 0.95em;
+            color: var(--light-text-color);
+            line-height: 1.5;
+         }
+         header .agency-info a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+         }
+         header .agency-info a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+         }
+
+        /* Section Styling */
+        h2 {
+            color: var(--primary-color);
+            margin-top: 35px;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            font-weight: 600;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Space between icon and text */
+        }
+        h2 i { /* Icon styling in headers */
+            color: var(--accent-color);
+            font-size: 1.1em;
+        }
+        h2:first-of-type {
+             margin-top: 0;
+        }
+
+
+        /* Input Group Styling */
+        .input-group {
+            margin-bottom: 25px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .input-field {
+            display: flex;
+            flex-direction: column;
+        }
+         .input-field.full-width {
+             grid-column: 1 / -1;
+        }
+         .instruction-text {
+             font-size: 0.9em;
+             color: var(--light-text-color);
+             margin-top: 8px;
+             margin-bottom: 5px;
+             padding: 12px 15px;
+             background-color: var(--secondary-color);
+             border-left: 4px solid var(--accent-color);
+             border-radius: 0 var(--border-radius) var(--border-radius) 0;
+         }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.95em;
+            color: var(--text-color);
+            display: flex; /* Align icon and text */
+            align-items: center;
+            gap: 8px;
+        }
+         label i { /* Icon styling in labels */
+             color: var(--accent-color);
+             font-size: 1.1em;
+             width: 18px; /* Fixed width for alignment */
+             text-align: center;
+         }
+
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1em;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+         input[type="number"]:focus {
+             border-color: var(--accent-color);
+             box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2); /* Focus ring */
+             outline: none;
+         }
+
+        /* Remove spinners */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
+        /* Button Styling */
+        button {
+            display: inline-flex; /* Align icon and text */
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(to right, var(--accent-color), var(--primary-color));
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+            margin-top: 10px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+            background: linear-gradient(to right, #5FA0E8, #3A6FB5); /* Lighter gradient on hover */
+        }
+        button:active {
+             transform: translateY(0);
+             box-shadow: var(--shadow-sm);
+        }
+
+        button:disabled {
+            background: #B0C4DE; /* Light gray-blue */
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+        #results-buttons {
+             display: flex;
+             flex-wrap: wrap;
+             gap: 15px;
+             margin-top: 25px;
+             justify-content: center; /* Center buttons in results */
+        }
+
+        /* Results Section Styling */
+        #results {
+            margin-top: 40px;
+            padding: 30px;
+            background-color: #F8FAFC; /* Slightly off-white */
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-inner); /* Optional inner shadow */
+        }
+        #results h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 1.5em;
+            font-weight: 600;
+            text-align: center;
+        }
+        #totalAreaDisplay {
+            font-size: 1.8em; /* Larger total */
+            font-weight: 700; /* Bolder */
+            color: var(--success-color);
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #ECFDF5; /* Light green background */
+            border-radius: var(--border-radius);
+            border: 1px solid #A7F3D0;
+        }
+        #results h4 { /* Detail calculation header */
+             color: var(--primary-color);
+             font-size: 1.1em;
+             font-weight: 600;
+             margin-top: 30px;
+             margin-bottom: 10px;
+         }
+        #calculationDetails {
+            font-family: 'Courier New', Courier, monospace; /* Monospace for details */
+            font-size: 0.9em;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+            background: #F1F5F9; /* Light gray background */
+            padding: 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+        }
+
+         /* Chart Container */
+        #chartContainer {
+             margin-top: 30px;
+             padding-top: 20px;
+             border-top: 1px solid var(--border-color);
+             display: flex;
+             justify-content: center;
+             align-items: center;
+             min-height: 300px; /* Ensure space for chart */
+         }
+         #commercialAreaChart {
+             max-width: 350px; /* Limit chart size */
+             width: 100%;
+         }
+
+        /* Tooltip Styling (keeping basic style) */
+         .tooltip { /* Adjusted for icon alignment */
+             position: relative;
+             display: inline-flex;
+             align-items: center;
+             justify-content: center;
+             cursor: help;
+             margin-left: auto; /* Push tooltip icon to the right */
+             color: var(--accent-color);
+             font-weight: bold;
+             width: 18px; height: 18px;
+             border: 1px solid var(--accent-color);
+             border-radius: 50%;
+             font-size: 0.8em;
+             line-height: 16px; /* Center '?' */
+         }
+         .tooltip .tooltiptext {
+             /* ... (tooltip text style remains largely the same, adjust colors if needed) ... */
+             visibility: hidden; width: 250px; background-color: #555; color: #fff; text-align: left; border-radius: 6px; padding: 8px 12px; position: absolute; z-index: 1; bottom: 135%; left: 50%; margin-left: -125px; opacity: 0; transition: opacity 0.3s; font-size: 0.85em; font-weight: normal; line-height: 1.4;
+         }
+         .tooltip .tooltiptext::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #555 transparent transparent transparent; }
+         .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container { padding: 20px 25px; max-width: 95%; }
+            header h1 { font-size: 1.8em; }
+            h2 { font-size: 1.3em; }
+             .input-group { grid-template-columns: 1fr; } /* Stack inputs */
+        }
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .container { padding: 15px 20px; }
+             header h1 { font-size: 1.6em; }
+             header .agency-info { font-size: 0.9em; }
+             h2 { font-size: 1.2em; }
+             button { font-size: 0.95em; padding: 10px 20px; width: 100%; margin-right: 0; }
+             #results-buttons { gap: 10px; }
+             #totalAreaDisplay { font-size: 1.5em; }
+             #chartContainer { min-height: 250px; }
+             #commercialAreaChart { max-width: 300px; }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Giuliato&Battistin</h1>
+            <div class="agency-info">
+                agenzia immobiliare<br>
+                Corso SS. Felice e Fortunato, 29 - 36100 Vicenza (VI) Italy<br>
+                Tel: <a href="tel:+390444525447">+39 0444 525447</a><br>
+                <a href="http://www.giuliatobattistin.it" target="_blank">www.giuliatobattistin.it</a> |
+                <a href="mailto:info@giuliatobattistin.it">info@giuliatobattistin.it</a>
+            </div>
+        </header>
+
+        <form id="calculatorForm">
+             <!-- Area Principale Lorda -->
+            <h2><i class="fa-solid fa-house"></i>Area Principale e Accessori</h2>
+             <div class="input-group">
+                <div class="input-field full-width">
+                    <label for="supLordaPrincipale"><i class="fa-solid fa-ruler-combined"></i>Superficie Lorda Principale (Abitabile + Muri)</label>
+                    <input type="number" id="supLordaPrincipale" min="0" step="0.01" placeholder="es. 110.50" value="0" required>
+                     <p class="instruction-text">
+                        <strong>Come calcolare:</strong> Inserire qui la somma di: Sup. calpestabile abitabile (incl. mansarde H>1.70m) + Muri interni (100%) + Muri perimetrali esterni (100%) + Metà Muri confinanti (50%).
+                        <br>Questo valore è la base per le % di balconi e giardini.
+                    </p>
+                </div>
+                 <div class="input-field">
+                     <label for="supAccessoriConnessi">
+                        <i class="fa-solid fa-door-open"></i>Sup. Accessori Connessi
+                        <span class="tooltip">?
+                            <span class="tooltiptext">Taverne, lavanderie, ecc. con accesso diretto dall'unità principale. H min soffitto piano: 2,20m; H min soffitte H>1,70m. Calcolati al 2/3.</span>
+                        </span>
+                     </label>
+                    <input type="number" id="supAccessoriConnessi" min="0" step="0.01" placeholder="es. 20.00" value="0">
+                </div>
+                <div class="input-field">
+                    <label for="supAccessoriNonConnessi">
+                        <i class="fa-solid fa-box-archive"></i>Sup. Accessori Non Connessi
+                        <span class="tooltip">?
+                            <span class="tooltiptext">Cantine, depositi, sottotetti non abitabili, ecc. con accesso da parti comuni o esterne. H min soffitto piano: 2,20m; H min soffitte H>1,70m. Calcolati al 1/2.</span>
+                        </span>
+                    </label>
+                    <input type="number" id="supAccessoriNonConnessi" min="0" step="0.01" placeholder="es. 10.00" value="0">
+                </div>
+            </div>
+
+
+            <!-- Balconi, Terrazze, Logge, Portici, Verande -->
+            <h2><i class="fa-solid fa-sun"></i>Balconi, Terrazze e Spazi Coperti</h2>
+            <div class="input-group">
+                <div class="input-field">
+                    <label for="supBalconiScoperti"><i class="fa-regular fa-square"></i>Sup. Balconi/Terrazze Scoperte</label>
+                    <input type="number" id="supBalconiScoperti" min="0" step="0.01" placeholder="es. 25.00" value="0">
+                </div>
+                <div class="input-field">
+                    <label for="supLoggeBalconiCoperti"><i class="fa-solid fa-person-shelter"></i>Sup. Logge e Balconi Coperti</label>
+                    <input type="number" id="supLoggeBalconiCoperti" min="0" step="0.01" placeholder="es. 12.00" value="0">
+                </div>
+                <div class="input-field">
+                    <label for="supPortici"><i class="fa-solid fa-archway"></i>Sup. Portici Esclusivi</label>
+                    <input type="number" id="supPortici" min="0" step="0.01" placeholder="es. 10.00" value="0">
+                </div>
+                <div class="input-field">
+                    <label for="supVerande"><i class="fa-solid fa-igloo"></i>Sup. Verande Chiuse</label>
+                    <input type="number" id="supVerande" min="0" step="0.01" placeholder="es. 8.00" value="0">
+                </div>
+            </div>
+
+
+             <!-- Giardini -->
+            <h2><i class="fa-solid fa-tree"></i>Giardini e Cortili Esclusivi</h2>
+             <div class="input-group">
+                 <div class="input-field">
+                    <label for="supGiardino"><i class="fa-solid fa-seedling"></i>Superficie Giardino/Cortile Esclusivo</label>
+                    <input type="number" id="supGiardino" min="0" step="0.01" placeholder="es. 150.00" value="0">
+                </div>
+            </div>
+
+            <!-- Autorimesse e Posti Auto -->
+            <h2><i class="fa-solid fa-car"></i>Autorimesse e Posti Auto</h2>
+             <div class="input-group">
+                 <div class="input-field">
+                    <label for="supAutorimesse"><i class="fa-solid fa-warehouse"></i>Sup. Autorimesse (Box)</label>
+                    <input type="number" id="supAutorimesse" min="0" step="0.01" placeholder="es. 18.00" value="0">
+                </div>
+                 <div class="input-field">
+                    <label for="supPostiAutoCoperti"><i class="fa-solid fa-car-on"></i>Sup. Posti Auto Coperti</label>
+                    <input type="number" id="supPostiAutoCoperti" min="0" step="0.01" placeholder="es. 12.00" value="0">
+                </div>
+                <div class="input-field">
+                    <label for="supPostiAutoScoperti"><i class="fa-solid fa-square-parking"></i>Sup. Posti Auto Scoperti</label>
+                    <input type="number" id="supPostiAutoScoperti" min="0" step="0.01" placeholder="es. 11.00" value="0">
+                </div>
+            </div>
+
+            <!-- Vetustà (Nota: non influisce sulla superficie commerciale) -->
+            <h2><i class="fa-solid fa-calendar-days"></i>Vetustà (Informativo)</h2>
+             <div class="input-group">
+                 <div class="input-field">
+                    <label for="etaImmobile">
+                        <i class="fa-solid fa-clock-rotate-left"></i>Anni Immobile / Ristrutturazione
+                        <span class="tooltip">?
+                            <span class="tooltiptext">Questo dato NON modifica la superficie commerciale secondo i criteri di Vicenza, ma è utile per la valutazione economica. Viene incluso nel report per completezza.</span>
+                        </span>
+                     </label>
+                    <input type="number" id="etaImmobile" min="0" step="1" placeholder="es. 15" value="0">
+                 </div>
+            </div>
+
+            <button type="button" id="calculateBtn"><i class="fa-solid fa-calculator"></i>Calcola Superficie</button>
+        </form>
+
+        <div id="results" style="display: none;">
+            <h3><i class="fa-solid fa-chart-pie"></i>Risultato del Calcolo</h3>
+            <div id="totalAreaDisplay">Superficie Commerciale: <span id="totalArea">0.00</span> mq</div>
+
+            <!-- Chart Visualization -->
+             <div id="chartContainer">
+                 <canvas id="commercialAreaChart"></canvas>
+            </div>
+
+            <h4><i class="fa-solid fa-list-ol"></i>Dettaglio Calcolo (mq)</h4>
+            <pre id="calculationDetails"></pre>
+
+            <div id="results-buttons">
+                 <button type="button" id="downloadBtn"><i class="fa-solid fa-file-arrow-down"></i>Scarica Report (IT / mq)</button>
+                 <button type="button" id="downloadEnSqftBtn"><i class="fa-solid fa-file-arrow-down"></i>Scarica Report (EN / sqft)</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const calculateBtn = document.getElementById('calculateBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const downloadEnSqftBtn = document.getElementById('downloadEnSqftBtn');
+        const resultsDiv = document.getElementById('results');
+        const totalAreaSpan = document.getElementById('totalArea');
+        const detailsPre = document.getElementById('calculationDetails');
+        const form = document.getElementById('calculatorForm');
+        const chartCanvas = document.getElementById('commercialAreaChart');
+
+        // Conversion Factor
+        const SQFT_PER_MQ = 10.7639;
+
+        // Store calculation details, inputs, and chart instance
+        let calculationLogMq = [];
+        let calculatedTotalAreaMq = 0;
+        let inputsForReport = {};
+        let commercialAreaContributions = {}; // To store breakdown for chart
+        let chartInstance = null; // To hold the Chart.js instance
+
+        // Helper function to get numeric value from input
+        function getNumVal(id) {
+            const value = parseFloat(document.getElementById(id).value);
+            return isNaN(value) || value < 0 ? 0 : value;
+        }
+
+        // Helper function to format numbers (metric)
+        function formatMq(num) { return num.toFixed(2); }
+         // Helper function to format numbers (imperial)
+        function formatSqft(num) { return num.toFixed(2); }
+
+        // Function to update or create the chart
+        function updateChart(data) {
+             const ctx = chartCanvas.getContext('2d');
+
+            const chartData = {
+                labels: Object.keys(data),
+                datasets: [{
+                    label: 'Ripartizione Superficie Commerciale (mq)',
+                    data: Object.values(data),
+                    backgroundColor: [ // Define nice colors
+                        '#4A90E2', // Bright Blue (Main Area)
+                        '#F5A623', // Orange (Balconies etc)
+                        '#50E3C2', // Teal (Garden)
+                        '#B8E986', // Light Green (Accessories)
+                        '#7ED321', // Green (Parking)
+                        '#9013FE', // Purple (Other if needed)
+                    ],
+                    borderColor: '#FFFFFF', // White border for segments
+                    borderWidth: 2,
+                    hoverOffset: 8 // Pop out segment on hover
+                }]
+            };
+
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false, // Allow chart container to dictate size somewhat
+                plugins: {
+                    legend: {
+                        position: 'bottom', // Move legend below chart
+                        labels: {
+                            padding: 15, // Space for legend items
+                             font: {
+                                 size: 11 // Slightly smaller legend font
+                             }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += formatMq(context.parsed) + ' mq';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                animation: {
+                    animateScale: true, // Animate chart scaling in
+                    animateRotate: true // Animate rotation
+                }
+            };
+
+             // Destroy previous chart instance if it exists
+             if (chartInstance) {
+                 chartInstance.destroy();
+             }
+
+             // Create new chart instance
+             chartInstance = new Chart(ctx, {
+                 type: 'doughnut', // or 'pie'
+                 data: chartData,
+                 options: chartOptions
+             });
+        }
+
+
+        calculateBtn.addEventListener('click', () => {
+            calculationLogMq = [];
+            calculatedTotalAreaMq = 0;
+            inputsForReport = {};
+            commercialAreaContributions = { // Reset contributions
+                 'Area Principale': 0,
+                 'Balconi/Esterni': 0,
+                 'Giardino': 0,
+                 'Accessori': 0,
+                 'Parking': 0
+            };
+
+            // --- 1. Get All Input Values ---
+            // (Same as before)
+            const supLordaPrincipale = getNumVal('supLordaPrincipale');
+            const supBalconiScoperti = getNumVal('supBalconiScoperti');
+            const supLoggeBalconiCoperti = getNumVal('supLoggeBalconiCoperti');
+            const supPortici = getNumVal('supPortici');
+            const supVerande = getNumVal('supVerande');
+            const supAccessoriConnessi = getNumVal('supAccessoriConnessi');
+            const supAccessoriNonConnessi = getNumVal('supAccessoriNonConnessi');
+            const supGiardino = getNumVal('supGiardino');
+            const supAutorimesse = getNumVal('supAutorimesse');
+            const supPostiAutoCoperti = getNumVal('supPostiAutoCoperti');
+            const supPostiAutoScoperti = getNumVal('supPostiAutoScoperti');
+            const etaImmobile = getNumVal('etaImmobile');
+
+            inputsForReport = { /* ... store all inputs ... */
+                supLordaPrincipale, supBalconiScoperti, supLoggeBalconiCoperti, supPortici, supVerande,
+                supAccessoriConnessi, supAccessoriNonConnessi, supGiardino,
+                supAutorimesse, supPostiAutoCoperti, supPostiAutoScoperti, etaImmobile
+            };
+
+            // --- 2. Calculate Base Area & Contributions ---
+            const baseAreaMq = supLordaPrincipale;
+            let currentCalcMq = 0;
+
+            if (baseAreaMq > 0) {
+                calculatedTotalAreaMq += baseAreaMq;
+                commercialAreaContributions['Area Principale'] += baseAreaMq; // Track contribution
+                calculationLogMq.push(` - Sup. Lorda Principale (Abitabile+Muri): ${formatMq(baseAreaMq)} mq (100%) = ${formatMq(baseAreaMq)} mq`);
+                calculationLogMq.push(`   (Usata come base per % balconi/giardini)`);
+            } else {
+                 calculationLogMq.push(` - Sup. Lorda Principale: 0.00 mq`);
+                 // ... (handle zero base area - skip % calculations, display, return) ...
+                 totalAreaSpan.textContent = formatMq(calculatedTotalAreaMq);
+                 detailsPre.textContent = calculationLogMq.join('\n');
+                 resultsDiv.style.display = 'block';
+                 resultsDiv.scrollIntoView({ behavior: 'smooth' });
+                 if (chartInstance) chartInstance.destroy(); // Clear chart if base is zero
+                 chartCanvas.style.display = 'none'; // Hide canvas
+                 return;
+            }
+            chartCanvas.style.display = 'block'; // Show canvas if base > 0
+
+            calculationLogMq.push(`\n-- Aggiunta Altre Superfici --\n`);
+
+            // --- 3. Calculate Balconi/Terrazze Scoperte (Tiered) & Contributions ---
+            let balconiTotCommMq = 0; // Total commercial area for this group
+            if (supBalconiScoperti > 0 && baseAreaMq > 0) {
+                // ... (Tiered calculation logic as before) ...
+                let balconiAreaCommMq = 0; // Temp var for this specific calculation
+                const limit25 = baseAreaMq * 0.25;
+                const limit50 = baseAreaMq * 0.50;
+                const limit100 = baseAreaMq * 1.00;
+                let remainingBalconi = supBalconiScoperti;
+                calculationLogMq.push(`Balconi/Terrazze Scoperte (${formatMq(supBalconiScoperti)} mq):`);
+                 // Tier 1
+                 if (remainingBalconi > 0) {
+                     const tier1Sup = Math.min(remainingBalconi, limit25);
+                     const tier1Comm = tier1Sup * (1/3);
+                     balconiAreaCommMq += tier1Comm; remainingBalconi -= tier1Sup;
+                     if (tier1Sup > 0) calculationLogMq.push(`  - Fino a ${formatMq(limit25)} mq (25%): ${formatMq(tier1Sup)} mq * 1/3 = ${formatMq(tier1Comm)} mq`);
+                 }
+                 // Tier 2
+                 if (remainingBalconi > 0) {
+                     const tier2Sup = Math.min(remainingBalconi, limit50 - limit25);
+                     const tier2Comm = tier2Sup * (1/4);
+                     balconiAreaCommMq += tier2Comm; remainingBalconi -= tier2Sup;
+                     if (tier2Sup > 0) calculationLogMq.push(`  - Da ${formatMq(limit25)} a ${formatMq(limit50)} mq: ${formatMq(tier2Sup)} mq * 1/4 = ${formatMq(tier2Comm)} mq`);
+                 }
+                 // Tier 3
+                 if (remainingBalconi > 0) {
+                     const tier3Sup = Math.min(remainingBalconi, limit100 - limit50);
+                     const tier3Comm = tier3Sup * (1/6);
+                     balconiAreaCommMq += tier3Comm; remainingBalconi -= tier3Sup;
+                     if (tier3Sup > 0) calculationLogMq.push(`  - Da ${formatMq(limit50)} a ${formatMq(limit100)} mq: ${formatMq(tier3Sup)} mq * 1/6 = ${formatMq(tier3Comm)} mq`);
+                 }
+                 // Tier 4
+                  if (remainingBalconi > 0) {
+                     const tier4Sup = remainingBalconi;
+                     const tier4Comm = tier4Sup * (1/10);
+                     balconiAreaCommMq += tier4Comm;
+                     if (tier4Sup > 0) calculationLogMq.push(`  - Oltre ${formatMq(limit100)} mq: ${formatMq(tier4Sup)} mq * 1/10 = ${formatMq(tier4Comm)} mq`);
+                 }
+                balconiTotCommMq += balconiAreaCommMq; // Add to this group's total
+                calculationLogMq.push(`  - Totale Commerciale Balconi Scoperti: ${formatMq(balconiAreaCommMq)} mq\n`);
+            }
+
+            // --- 4. Calculate Other External/Accessory Areas & Contributions ---
+            if (supLoggeBalconiCoperti > 0) {
+                currentCalcMq = supLoggeBalconiCoperti * 0.5;
+                balconiTotCommMq += currentCalcMq; // Add to Balconi/Esterni group
+                calculationLogMq.push(` - Sup. Logge/Balconi Coperti: ${formatMq(supLoggeBalconiCoperti)} mq (50%) = ${formatMq(currentCalcMq)} mq`);
+            }
+            if (supPortici > 0) {
+                currentCalcMq = supPortici * 0.5;
+                balconiTotCommMq += currentCalcMq; // Add to Balconi/Esterni group
+                calculationLogMq.push(` - Sup. Portici Esclusivi: ${formatMq(supPortici)} mq (50%) = ${formatMq(currentCalcMq)} mq`);
+            }
+            if (supVerande > 0) {
+                currentCalcMq = supVerande * (2/3);
+                balconiTotCommMq += currentCalcMq; // Add to Balconi/Esterni group
+                calculationLogMq.push(` - Sup. Verande: ${formatMq(supVerande)} mq (2/3) = ${formatMq(currentCalcMq)} mq`);
+            }
+            // Add total external/balcony contribution to main total and track
+            calculatedTotalAreaMq += balconiTotCommMq;
+            commercialAreaContributions['Balconi/Esterni'] += balconiTotCommMq;
+
+
+            // Accessories Contribution
+            let accessoriTotCommMq = 0;
+            if (supAccessoriConnessi > 0) {
+                currentCalcMq = supAccessoriConnessi * (2/3);
+                accessoriTotCommMq += currentCalcMq;
+                calculationLogMq.push(` - Sup. Accessori Connessi: ${formatMq(supAccessoriConnessi)} mq (2/3) = ${formatMq(currentCalcMq)} mq`);
+            }
+            if (supAccessoriNonConnessi > 0) {
+                currentCalcMq = supAccessoriNonConnessi * 0.5;
+                accessoriTotCommMq += currentCalcMq;
+                calculationLogMq.push(` - Sup. Accessori Non Connessi: ${formatMq(supAccessoriNonConnessi)} mq (50%) = ${formatMq(currentCalcMq)} mq`);
+            }
+             calculatedTotalAreaMq += accessoriTotCommMq;
+             commercialAreaContributions['Accessori'] += accessoriTotCommMq;
+
+
+            // --- 5. Calculate Giardini/Cortili (Tiered) & Contributions ---
+            let giardinoTotCommMq = 0;
+            if (supGiardino > 0 && baseAreaMq > 0) {
+                // ... (Tiered calculation logic as before) ...
+                 let giardinoAreaCommMq = 0; // temp
+                 const gardenLimit1 = baseAreaMq * 1.0;
+                 const gardenLimit3 = baseAreaMq * 3.0;
+                 const gardenLimit5 = baseAreaMq * 5.0;
+                 let remainingGiardino = supGiardino;
+                 calculationLogMq.push(`\nGiardino/Cortile Esclusivo (${formatMq(supGiardino)} mq):`);
+                 // Tier 1
+                 if (remainingGiardino > 0) {
+                     const tier1Sup = Math.min(remainingGiardino, gardenLimit1);
+                     const tier1Comm = tier1Sup * (1/6);
+                     giardinoAreaCommMq += tier1Comm; remainingGiardino -= tier1Sup;
+                     if (tier1Sup > 0) calculationLogMq.push(`  - Fino a ${formatMq(gardenLimit1)} mq (100%): ${formatMq(tier1Sup)} mq * 1/6 = ${formatMq(tier1Comm)} mq`);
+                 }
+                  // Tier 2
+                 if (remainingGiardino > 0) {
+                     const tier2Sup = Math.min(remainingGiardino, gardenLimit3 - gardenLimit1);
+                     const tier2Comm = tier2Sup * (1/10);
+                     giardinoAreaCommMq += tier2Comm; remainingGiardino -= tier2Sup;
+                     if (tier2Sup > 0) calculationLogMq.push(`  - Da ${formatMq(gardenLimit1)} a ${formatMq(gardenLimit3)} mq: ${formatMq(tier2Sup)} mq * 1/10 = ${formatMq(tier2Comm)} mq`);
+                 }
+                 // Tier 3
+                 if (remainingGiardino > 0) {
+                     const tier3Sup = Math.min(remainingGiardino, gardenLimit5 - gardenLimit3);
+                     const tier3Comm = tier3Sup * (1/20);
+                     giardinoAreaCommMq += tier3Comm; remainingGiardino -= tier3Sup;
+                     if (tier3Sup > 0) calculationLogMq.push(`  - Da ${formatMq(gardenLimit3)} a ${formatMq(gardenLimit5)} mq: ${formatMq(tier3Sup)} mq * 1/20 = ${formatMq(tier3Comm)} mq`);
+                 }
+                  // Tier 4
+                  if (remainingGiardino > 0) {
+                     const tier4Sup = remainingGiardino;
+                     const tier4Comm = tier4Sup * (1/50);
+                     giardinoAreaCommMq += tier4Comm;
+                     if (tier4Sup > 0) calculationLogMq.push(`  - Oltre ${formatMq(gardenLimit5)} mq: ${formatMq(tier4Sup)} mq * 1/50 = ${formatMq(tier4Comm)} mq`);
+                  }
+                 giardinoTotCommMq += giardinoAreaCommMq;
+                 calculationLogMq.push(`  - Totale Commerciale Giardino: ${formatMq(giardinoAreaCommMq)} mq\n`);
+             }
+             calculatedTotalAreaMq += giardinoTotCommMq;
+             commercialAreaContributions['Giardino'] += giardinoTotCommMq;
+
+
+            // --- 6. Calculate Autorimesse/Posti Auto & Contributions ---
+             let parkingTotCommMq = 0;
+             calculationLogMq.push(`Autorimesse e Posti Auto:`);
+             if (supAutorimesse > 0) {
+                currentCalcMq = supAutorimesse * (2/3);
+                parkingTotCommMq += currentCalcMq;
+                calculationLogMq.push(` - Sup. Autorimesse (Box): ${formatMq(supAutorimesse)} mq (2/3) = ${formatMq(currentCalcMq)} mq`);
+            }
+             if (supPostiAutoCoperti > 0) {
+                currentCalcMq = supPostiAutoCoperti * 0.5;
+                parkingTotCommMq += currentCalcMq;
+                calculationLogMq.push(` - Sup. Posti Auto Coperti: ${formatMq(supPostiAutoCoperti)} mq (50%) = ${formatMq(currentCalcMq)} mq`);
+            }
+             if (supPostiAutoScoperti > 0) {
+                currentCalcMq = supPostiAutoScoperti * 0.2;
+                parkingTotCommMq += currentCalcMq;
+                calculationLogMq.push(` - Sup. Posti Auto Scoperti: ${formatMq(supPostiAutoScoperti)} mq (20%) = ${formatMq(currentCalcMq)} mq`);
+            }
+             calculatedTotalAreaMq += parkingTotCommMq;
+             commercialAreaContributions['Parking'] += parkingTotCommMq;
+
+            // --- 7. Display Results & Update Chart ---
+            totalAreaSpan.textContent = formatMq(calculatedTotalAreaMq);
+            detailsPre.textContent = calculationLogMq.join('\n');
+
+            // Filter out categories with 0 contribution for a cleaner chart
+            const filteredContributions = Object.entries(commercialAreaContributions)
+                .filter(([key, value]) => value > 0.005) // Keep if contribution is > 0.005 sqm
+                .reduce((obj, [key, value]) => {
+                    obj[key] = value;
+                    return obj;
+                }, {});
+
+             updateChart(filteredContributions); // Update the chart with calculated data
+
+            resultsDiv.style.display = 'block';
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' }); // Scroll to top of results
+        });
+
+
+        // --- 8. Download Report Functionality ---
+        function generateReportHtml(language) {
+            const isEnglish = language === 'en';
+            const now = new Date();
+            const timestamp = now.toLocaleString(isEnglish ? 'en-US' : 'it-IT');
+            const unit = isEnglish ? 'sqft' : 'mq';
+            const factor = isEnglish ? SQFT_PER_MQ : 1;
+            const formatter = isEnglish ? formatSqft : formatMq;
+
+            // Labels object (ensure this is complete as in the previous correct version)
+             const labels = isEnglish ? { /* English Labels */
+                 reportTitle: "Commercial Area Calculation Report", calculationDate: "Calculation Date/Time",
+                 basedOn: "Calculation based on Vicenza Real Estate Exchange criteria.", inputData: "Input Data:",
+                 description: "Description", valueUnit: `Value (${unit})`, grossMainArea: "Gross Main Area (Habitable + Walls)",
+                 balconiesUncovered: "Uncovered Balconies/Terraces", loggiasCoveredBalconies: "Loggias / Covered Balconies",
+                 porchesExclusive: "Exclusive Porches", verandas: "Verandas", accessoriesConnected: "Directly Connected Ancillary Areas",
+                 accessoriesNotConnected: "Not Directly Connected Ancillary Areas", gardenExclusive: "Exclusive Garden/Courtyard",
+                 garages: "Garages (Box)", coveredParking: "Covered Parking Spaces", uncoveredParking: "Uncovered Parking Spaces",
+                 propertyAge: "Property Age (years - informational)", calculationDetails: `Calculation Details (${unit}):`,
+                 totalResult: `Total Calculated Commercial Area:`,
+                 footerDisclaimer: "This report is generated automatically based on user input and known criteria. Professional verification is recommended for official valuations.",
+                 agencyName: "Giuliato&Battistin real estate agency",
+                  // Detail log translations (simpler terms)
+                 mainAreaLog: "Gross Main Area (Habitable+Walls)",
+                 mainAreaBaseLog: "Used as base for balcony/garden %",
+                 addingOtherAreas: "-- Adding Other Areas --",
+                 uncoveredBalconiesLog: `Uncovered Balconies/Terraces (${formatter(inputsForReport.supBalconiScoperti * factor)} ${unit}):`,
+                 upTo25: `Up to ${formatter(inputsForReport.supLordaPrincipale * 0.25 * factor)} ${unit} (25%)`,
+                 from25to50: `From ${formatter(inputsForReport.supLordaPrincipale * 0.25 * factor)} to ${formatter(inputsForReport.supLordaPrincipale * 0.50 * factor)} ${unit}`,
+                 from50to100: `From ${formatter(inputsForReport.supLordaPrincipale * 0.50 * factor)} to ${formatter(inputsForReport.supLordaPrincipale * 1.00 * factor)} ${unit}`,
+                 over100: `Over ${formatter(inputsForReport.supLordaPrincipale * 1.00 * factor)} ${unit}`,
+                 totalCommBalconies: "Total Commercial Balcony Area:",
+                 loggiasLog: "Loggias/Covered Balconies",
+                 porchesLog: "Exclusive Porches",
+                 verandasLog: "Verandas",
+                 accessoriesConnectedLog: "Directly Connected Ancillary Areas",
+                 accessoriesNotConnectedLog: "Not Directly Connected Ancillary Areas",
+                 gardenLog: `Exclusive Garden/Courtyard (${formatter(inputsForReport.supGiardino * factor)} ${unit}):`,
+                 upTo100Garden: `Up to ${formatter(inputsForReport.supLordaPrincipale * 1.0 * factor)} ${unit} (100%)`,
+                 from100to300Garden: `From ${formatter(inputsForReport.supLordaPrincipale * 1.0 * factor)} to ${formatter(inputsForReport.supLordaPrincipale * 3.0 * factor)} ${unit}`,
+                 from300to500Garden: `From ${formatter(inputsForReport.supLordaPrincipale * 3.0 * factor)} to ${formatter(inputsForReport.supLordaPrincipale * 5.0 * factor)} ${unit}`,
+                 over500Garden: `Over ${formatter(inputsForReport.supLordaPrincipale * 5.0 * factor)} ${unit}`,
+                 totalCommGarden: "Total Commercial Garden Area:",
+                 garagesParkingLog: "Garages and Parking Spaces:",
+                 garagesLog: "Garages (Box)",
+                 coveredParkingLog: "Covered Parking Spaces",
+                 uncoveredParkingLog: "Uncovered Parking Spaces"
+             } : { /* Italian Labels */
+                 reportTitle: "Report Calcolo Superficie Commerciale Residenziale", calculationDate: "Data e ora del calcolo",
+                 basedOn: "Calcolo basato sui criteri della Borsa Immobiliare di Vicenza.", inputData: "Dati Inseriti:",
+                 description: "Descrizione", valueUnit: `Valore (${unit})`, grossMainArea: "Superficie Lorda Principale (Abitabile + Muri)",
+                 balconiesUncovered: "Sup. Balconi/Terrazze Scoperte", loggiasCoveredBalconies: "Sup. Logge/Balconi Coperti",
+                 porchesExclusive: "Sup. Portici Esclusivi", verandas: "Sup. Verande", accessoriesConnected: "Sup. Accessori Connessi",
+                 accessoriesNotConnected: "Sup. Accessori Non Connessi", gardenExclusive: "Sup. Giardino/Cortile Esclusivo",
+                 garages: "Sup. Autorimesse (Box)", coveredParking: "Sup. Posti Auto Coperti", uncoveredParking: "Sup. Posti Auto Scoperti",
+                 propertyAge: "Età Immobile (anni - informativo)", calculationDetails: `Dettaglio Calcolo (${unit}):`,
+                 totalResult: `Superficie Commerciale Totale Calcolata:`,
+                 footerDisclaimer: "Questo report è generato automaticamente e si basa sui dati inseriti dall'utente e sui criteri noti. Si consiglia una verifica professionale per stime ufficiali.",
+                 agencyName: "Giuliato&Battistin agenzia immobiliare",
+                  // Detail log (reuse metric log structure)
+                 mainAreaLog: "Sup. Lorda Principale (Abitabile+Muri)",
+                 mainAreaBaseLog: "Usata come base per % balconi/giardini",
+                 addingOtherAreas: "-- Aggiunta Altre Superfici --",
+                 uncoveredBalconiesLog: `Balconi/Terrazze Scoperte (${formatter(inputsForReport.supBalconiScoperti * factor)} ${unit}):`,
+                 upTo25: `Fino a ${formatter(inputsForReport.supLordaPrincipale * 0.25 * factor)} ${unit} (25%)`,
+                 from25to50: `Da ${formatter(inputsForReport.supLordaPrincipale * 0.25 * factor)} a ${formatter(inputsForReport.supLordaPrincipale * 0.50 * factor)} ${unit}`,
+                 from50to100: `Da ${formatter(inputsForReport.supLordaPrincipale * 0.50 * factor)} a ${formatter(inputsForReport.supLordaPrincipale * 1.00 * factor)} ${unit}`,
+                 over100: `Oltre ${formatter(inputsForReport.supLordaPrincipale * 1.00 * factor)} ${unit}`,
+                 totalCommBalconies: "Totale Commerciale Balconi Scoperti:",
+                 loggiasLog: "Sup. Logge/Balconi Coperti",
+                 porchesLog: "Sup. Portici Esclusivi",
+                 verandasLog: "Sup. Verande",
+                 accessoriesConnectedLog: "Sup. Accessori Connessi",
+                 accessoriesNotConnectedLog: "Sup. Accessori Non Connessi",
+                 gardenLog: `Giardino/Cortile Esclusivo (${formatter(inputsForReport.supGiardino * factor)} ${unit}):`,
+                 upTo100Garden: `Fino a ${formatter(inputsForReport.supLordaPrincipale * 1.0 * factor)} ${unit} (100%)`,
+                 from100to300Garden: `Da ${formatter(inputsForReport.supLordaPrincipale * 1.0 * factor)} a ${formatter(inputsForReport.supLordaPrincipale * 3.0 * factor)} ${unit}`,
+                 from300to500Garden: `Da ${formatter(inputsForReport.supLordaPrincipale * 3.0 * factor)} a ${formatter(inputsForReport.supLordaPrincipale * 5.0 * factor)} ${unit}`,
+                 over500Garden: `Oltre ${formatter(inputsForReport.supLordaPrincipale * 5.0 * factor)} ${unit}`,
+                 totalCommGarden: "Totale Commerciale Giardino:",
+                 garagesParkingLog: "Autorimesse e Posti Auto:",
+                 garagesLog: "Sup. Autorimesse (Box)",
+                 coveredParkingLog: "Sup. Posti Auto Coperti",
+                 uncoveredParkingLog: "Sup. Posti Auto Scoperti"
+             };
+
+             // --- Recalculate and build detail log for the specific unit/language ---
+             // --- THIS IS THE CORRECTED/COMPLETED PART ---
+             let detailLogReport = []; // Log array specific to this report generation
+             let totalAreaReport = 0; // Total area specific to this report generation
+             let currentCalcReport = 0; // Temporary calculation variable
+             const baseAreaReport = inputsForReport.supLordaPrincipale * factor; // Base area in target units
+
+             // 1. Base Area Log
+             if (baseAreaReport > 0) {
+                 totalAreaReport += baseAreaReport;
+                 detailLogReport.push(` - ${labels.mainAreaLog}: ${formatter(baseAreaReport)} ${unit} (100%) = ${formatter(baseAreaReport)} ${unit}`);
+                 detailLogReport.push(`   (${labels.mainAreaBaseLog})`);
+             } else {
+                 detailLogReport.push(` - ${labels.mainAreaLog}: 0.00 ${unit}`);
+             }
+
+             detailLogReport.push(`\n${labels.addingOtherAreas}\n`);
+
+             // 2. Balconies (Tiered) Log
+             const supBalconiScopertiVal = inputsForReport.supBalconiScoperti * factor;
+             if (supBalconiScopertiVal > 0 && baseAreaReport > 0) {
+                 let balconiAreaCommReport = 0;
+                 const limit25_unit = baseAreaReport * 0.25;
+                 const limit50_unit = baseAreaReport * 0.50;
+                 const limit100_unit = baseAreaReport * 1.00;
+                 let remainingBalconi_unit = supBalconiScopertiVal;
+                 detailLogReport.push(`${labels.uncoveredBalconiesLog}`);
+
+                 // Tier 1
+                 if (remainingBalconi_unit > 0) {
+                     const tier1Sup = Math.min(remainingBalconi_unit, limit25_unit);
+                     const tier1Comm = tier1Sup * (1/3);
+                     balconiAreaCommReport += tier1Comm;
+                     remainingBalconi_unit -= tier1Sup;
+                     if (tier1Sup > 0) detailLogReport.push(`  - ${labels.upTo25}: ${formatter(tier1Sup)} ${unit} * 1/3 = ${formatter(tier1Comm)} ${unit}`);
+                 }
+                 // Tier 2
+                 if (remainingBalconi_unit > 0) {
+                     const tier2Sup = Math.min(remainingBalconi_unit, limit50_unit - limit25_unit);
+                     const tier2Comm = tier2Sup * (1/4);
+                     balconiAreaCommReport += tier2Comm;
+                     remainingBalconi_unit -= tier2Sup;
+                      if (tier2Sup > 0) detailLogReport.push(`  - ${labels.from25to50}: ${formatter(tier2Sup)} ${unit} * 1/4 = ${formatter(tier2Comm)} ${unit}`);
+                 }
+                 // Tier 3
+                 if (remainingBalconi_unit > 0) {
+                     const tier3Sup = Math.min(remainingBalconi_unit, limit100_unit - limit50_unit);
+                     const tier3Comm = tier3Sup * (1/6);
+                     balconiAreaCommReport += tier3Comm;
+                     remainingBalconi_unit -= tier3Sup;
+                     if (tier3Sup > 0) detailLogReport.push(`  - ${labels.from50to100}: ${formatter(tier3Sup)} ${unit} * 1/6 = ${formatter(tier3Comm)} ${unit}`);
+                 }
+                 // Tier 4
+                 if (remainingBalconi_unit > 0) {
+                     const tier4Sup = remainingBalconi_unit;
+                     const tier4Comm = tier4Sup * (1/10);
+                     balconiAreaCommReport += tier4Comm;
+                     if (tier4Sup > 0) detailLogReport.push(`  - ${labels.over100}: ${formatter(tier4Sup)} ${unit} * 1/10 = ${formatter(tier4Comm)} ${unit}`);
+                 }
+                 totalAreaReport += balconiAreaCommReport; // Add contribution to total
+                 detailLogReport.push(`  - ${labels.totalCommBalconies} ${formatter(balconiAreaCommReport)} ${unit}\n`);
+             }
+
+            // 3. Other External/Accessory Areas Log
+             const supLoggeBalconiCopertiVal = inputsForReport.supLoggeBalconiCoperti * factor;
+             if (supLoggeBalconiCopertiVal > 0) {
+                 currentCalcReport = supLoggeBalconiCopertiVal * 0.5;
+                 totalAreaReport += currentCalcReport;
+                 detailLogReport.push(` - ${labels.loggiasLog}: ${formatter(supLoggeBalconiCopertiVal)} ${unit} (50%) = ${formatter(currentCalcReport)} ${unit}`);
+             }
+             const supPorticiVal = inputsForReport.supPortici * factor;
+             if (supPorticiVal > 0) {
+                 currentCalcReport = supPorticiVal * 0.5;
+                 totalAreaReport += currentCalcReport;
+                 detailLogReport.push(` - ${labels.porchesLog}: ${formatter(supPorticiVal)} ${unit} (50%) = ${formatter(currentCalcReport)} ${unit}`);
+             }
+             const supVerandeVal = inputsForReport.supVerande * factor;
+             if (supVerandeVal > 0) {
+                 currentCalcReport = supVerandeVal * (2/3);
+                 totalAreaReport += currentCalcReport;
+                 detailLogReport.push(` - ${labels.verandasLog}: ${formatter(supVerandeVal)} ${unit} (2/3) = ${formatter(currentCalcReport)} ${unit}`);
+             }
+             const supAccessoriConnessiVal = inputsForReport.supAccessoriConnessi * factor;
+             if (supAccessoriConnessiVal > 0) {
+                 currentCalcReport = supAccessoriConnessiVal * (2/3);
+                 totalAreaReport += currentCalcReport;
+                 detailLogReport.push(` - ${labels.accessoriesConnectedLog}: ${formatter(supAccessoriConnessiVal)} ${unit} (2/3) = ${formatter(currentCalcReport)} ${unit}`);
+             }
+             const supAccessoriNonConnessiVal = inputsForReport.supAccessoriNonConnessi * factor;
+             if (supAccessoriNonConnessiVal > 0) {
+                 currentCalcReport = supAccessoriNonConnessiVal * 0.5;
+                 totalAreaReport += currentCalcReport;
+                 detailLogReport.push(` - ${labels.accessoriesNotConnectedLog}: ${formatter(supAccessoriNonConnessiVal)} ${unit} (50%) = ${formatter(currentCalcReport)} ${unit}`);
+             }
+
+             // 4. Garden (Tiered) Log
+             const supGiardinoVal = inputsForReport.supGiardino * factor;
+             if (supGiardinoVal > 0 && baseAreaReport > 0) {
+                 let giardinoAreaCommReport = 0;
+                 const gardenLimit1_unit = baseAreaReport * 1.0;
+                 const gardenLimit3_unit = baseAreaReport * 3.0;
+                 const gardenLimit5_unit = baseAreaReport * 5.0;
+                 let remainingGiardino_unit = supGiardinoVal;
+                 detailLogReport.push(`\n${labels.gardenLog}`);
+
+                 // Tier 1
+                 if (remainingGiardino_unit > 0) {
+                     const tier1Sup = Math.min(remainingGiardino_unit, gardenLimit1_unit);
+                     const tier1Comm = tier1Sup * (1/6);
+                     giardinoAreaCommReport += tier1Comm; remainingGiardino_unit -= tier1Sup;
+                     if (tier1Sup > 0) detailLogReport.push(`  - ${labels.upTo100Garden}: ${formatter(tier1Sup)} ${unit} * 1/6 = ${formatter(tier1Comm)} ${unit}`);
+                 }
+                 // Tier 2
+                 if (remainingGiardino_unit > 0) {
+                     const tier2Sup = Math.min(remainingGiardino_unit, gardenLimit3_unit - gardenLimit1_unit);
+                     const tier2Comm = tier2Sup * (1/10);
+                     giardinoAreaCommReport += tier2Comm; remainingGiardino_unit -= tier2Sup;
+                     if (tier2Sup > 0) detailLogReport.push(`  - ${labels.from100to300Garden}: ${formatter(tier2Sup)} ${unit} * 1/10 = ${formatter(tier2Comm)} ${unit}`);
+                 }
+                 // Tier 3
+                 if (remainingGiardino_unit > 0) {
+                     const tier3Sup = Math.min(remainingGiardino_unit, gardenLimit5_unit - gardenLimit3_unit);
+                     const tier3Comm = tier3Sup * (1/20);
+                     giardinoAreaCommReport += tier3Comm; remainingGiardino_unit -= tier3Sup;
+                     if (tier3Sup > 0) detailLogReport.push(`  - ${labels.from300to500Garden}: ${formatter(tier3Sup)} ${unit} * 1/20 = ${formatter(tier3Comm)} ${unit}`);
+                 }
+                 // Tier 4
+                 if (remainingGiardino_unit > 0) {
+                     const tier4Sup = remainingGiardino_unit;
+                     const tier4Comm = tier4Sup * (1/50);
+                     giardinoAreaCommReport += tier4Comm;
+                     if (tier4Sup > 0) detailLogReport.push(`  - ${labels.over500Garden}: ${formatter(tier4Sup)} ${unit} * 1/50 = ${formatter(tier4Comm)} ${unit}`);
+                 }
+                 totalAreaReport += giardinoAreaCommReport; // Add contribution to total
+                 detailLogReport.push(`  - ${labels.totalCommGarden} ${formatter(giardinoAreaCommReport)} ${unit}\n`);
+             }
+
+            // 5. Garages/Parking Log
+            detailLogReport.push(`${labels.garagesParkingLog}`);
+             const supAutorimesseVal = inputsForReport.supAutorimesse * factor;
+            if (supAutorimesseVal > 0) {
+                currentCalcReport = supAutorimesseVal * (2/3);
+                totalAreaReport += currentCalcReport;
+                detailLogReport.push(` - ${labels.garagesLog}: ${formatter(supAutorimesseVal)} ${unit} (2/3) = ${formatter(currentCalcReport)} ${unit}`);
+            }
+            const supPostiAutoCopertiVal = inputsForReport.supPostiAutoCoperti * factor;
+             if (supPostiAutoCopertiVal > 0) {
+                currentCalcReport = supPostiAutoCopertiVal * 0.5;
+                totalAreaReport += currentCalcReport;
+                detailLogReport.push(` - ${labels.coveredParkingLog}: ${formatter(supPostiAutoCopertiVal)} ${unit} (50%) = ${formatter(currentCalcReport)} ${unit}`);
+            }
+             const supPostiAutoScopertiVal = inputsForReport.supPostiAutoScoperti * factor;
+             if (supPostiAutoScopertiVal > 0) {
+                currentCalcReport = supPostiAutoScopertiVal * 0.2;
+                totalAreaReport += currentCalcReport;
+                detailLogReport.push(` - ${labels.uncoveredParkingLog}: ${formatter(supPostiAutoScopertiVal)} ${unit} (20%) = ${formatter(currentCalcReport)} ${unit}`);
+            }
+            // --- END OF CORRECTED/COMPLETED PART ---
+
+
+            // --- Assemble HTML (using the now populated detailLogReport and totalAreaReport) ---
+            const reportHtml = `
+             <!DOCTYPE html>
+             <html lang="${language}">
+             <head>
+                 <meta charset="UTF-8">
+                 <title>${labels.reportTitle}</title>
+                 <style> /* Basic report styling */
+                     body { font-family: sans-serif; line-height: 1.4; padding: 20px; font-size: 10pt;}
+                     .header, .footer { text-align: center; margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px;}
+                     .footer { border-bottom: none; border-top: 1px solid #ccc; margin-top: 20px; padding-top: 10px; font-size: 9pt; }
+                     h1 { font-size: 16pt; margin-bottom: 5px;}
+                     h2 { font-size: 14pt; margin-top: 20px; margin-bottom: 10px;}
+                     h3 { font-size: 12pt; margin-top: 15px; margin-bottom: 5px;}
+                     table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10pt; }
+                     th, td { border: 1px solid #ddd; padding: 6px; text-align: left; }
+                     th { background-color: #f2f2f2; }
+                     pre { background-color: #f8f8f8; padding: 10px; border: 1px solid #eee; white-space: pre-wrap; font-size: 9pt; font-family: monospace; }
+                     .total { font-size: 13pt; font-weight: bold; text-align: center; margin: 15px 0; padding: 10px; background-color: #e8f5e9; border: 1px solid #a5d6a7;}
+                 </style>
+             </head>
+             <body>
+                 <div class="header">
+                     <h1>Giuliato&Battistin</h1>
+                     <div>
+                         ${isEnglish ? 'real estate agency' : 'agenzia immobiliare'}<br>
+                         Corso SS. Felice e Fortunato, 29 - 36100 Vicenza (VI) Italy<br>
+                         Tel: <a href="tel:+390444525447">+39 0444 525447</a> |
+                         <a href="http://www.giuliatobattistin.it" target="_blank">www.giuliatobattistin.it</a> |
+                         <a href="mailto:info@giuliatobattistin.it">info@giuliatobattistin.it</a>
+                     </div>
+                 </div>
+                 <h2>${labels.reportTitle}</h2>
+                 <p>${labels.calculationDate}: ${timestamp}</p>
+                 <p>${labels.basedOn}</p>
+                 <h3>${labels.inputData}</h3>
+                 <table><thead><tr><th>${labels.description}</th><th>${labels.valueUnit}</th></tr></thead><tbody>
+                     <tr><td>${labels.grossMainArea}</td><td>${formatter(inputsForReport.supLordaPrincipale * factor)}</td></tr>
+                     <tr><td>${labels.balconiesUncovered}</td><td>${formatter(inputsForReport.supBalconiScoperti * factor)}</td></tr>
+                     <tr><td>${labels.loggiasCoveredBalconies}</td><td>${formatter(inputsForReport.supLoggeBalconiCoperti * factor)}</td></tr>
+                     <tr><td>${labels.porchesExclusive}</td><td>${formatter(inputsForReport.supPortici * factor)}</td></tr>
+                     <tr><td>${labels.verandas}</td><td>${formatter(inputsForReport.supVerande * factor)}</td></tr>
+                     <tr><td>${labels.accessoriesConnected}</td><td>${formatter(inputsForReport.supAccessoriConnessi * factor)}</td></tr>
+                     <tr><td>${labels.accessoriesNotConnected}</td><td>${formatter(inputsForReport.supAccessoriNonConnessi * factor)}</td></tr>
+                     <tr><td>${labels.gardenExclusive}</td><td>${formatter(inputsForReport.supGiardino * factor)}</td></tr>
+                     <tr><td>${labels.garages}</td><td>${formatter(inputsForReport.supAutorimesse * factor)}</td></tr>
+                     <tr><td>${labels.coveredParking}</td><td>${formatter(inputsForReport.supPostiAutoCoperti * factor)}</td></tr>
+                     <tr><td>${labels.uncoveredParking}</td><td>${formatter(inputsForReport.supPostiAutoScoperti * factor)}</td></tr>
+                     <tr><td>${labels.propertyAge}</td><td>${inputsForReport.etaImmobile}</td></tr>
+                 </tbody></table>
+                 <h3>${labels.calculationDetails}</h3>
+                 <pre>${detailLogReport.join('\n')}</pre> <!-- Use the report-specific log -->
+                 <div class="total">${labels.totalResult} ${formatter(totalAreaReport)} ${unit}</div> <!-- Use the report-specific total -->
+                 <div class="footer">
+                     ${labels.footerDisclaimer}<br>${labels.agencyName}<br>
+                     Corso SS. Felice e Fortunato, 29 - 36100 Vicenza (VI) Italy - Tel: +39 0444 525447
+                 </div>
+             </body></html>`;
+             return reportHtml;
+        }
+
+        // --- Attach Download Listeners (No changes needed here) ---
+        downloadBtn.addEventListener('click', () => {
+            const reportHtml = generateReportHtml('it'); // Generate Italian version
+            const blob = new Blob([reportHtml], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `report-superficie-commerciale-mq-${new Date().toISOString().slice(0,10)}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+         downloadEnSqftBtn.addEventListener('click', () => {
+            const reportHtml = generateReportHtml('en'); // Generate English/SqFt version
+            const blob = new Blob([reportHtml], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+             a.download = `report-commercial-area-sqft-${new Date().toISOString().slice(0,10)}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+
+    </script>
+</body>
+</html>
