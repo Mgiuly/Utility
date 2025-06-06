@@ -468,6 +468,7 @@
         const detailsPre = document.getElementById('calculationDetails');
         const form = document.getElementById('calculatorForm');
         const chartCanvas = document.getElementById('commercialAreaChart');
+        const chartContainer = document.getElementById('chartContainer');
 
         // Conversion Factor
         const SQFT_PER_MQ = 10.7639;
@@ -610,11 +611,13 @@
                  detailsPre.textContent = calculationLogMq.join('\n');
                  resultsDiv.style.display = 'block';
                  resultsDiv.scrollIntoView({ behavior: 'smooth' });
-                 if (chartInstance) chartInstance.destroy(); // Clear chart if base is zero
-                 chartCanvas.style.display = 'none'; // Hide canvas
-                 return;
+                if (chartInstance) chartInstance.destroy(); // Clear chart if base is zero
+                chartCanvas.style.display = 'none'; // Hide canvas
+                chartContainer.style.display = 'none'; // Hide container to remove blank space
+                return;
             }
             chartCanvas.style.display = 'block'; // Show canvas if base > 0
+            chartContainer.style.display = 'block'; // Ensure container visible
 
             calculationLogMq.push(`\n-- Aggiunta Altre Superfici --\n`);
 
